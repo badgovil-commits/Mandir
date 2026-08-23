@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#8b3d16">
+<title>My Little Mandir</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{background:linear-gradient(#ffd98a,#fff3cf);color:#4a291d}.app{max-width:920px;margin:auto;padding:12px}.head{text-align:center}.head h1{margin:2px;font-size:34px}.head p{margin:3px;font-weight:800}.temple{background:linear-gradient(#fff0bd,#ffe0a0);border:4px solid #d68a2d;border-radius:28px;padding:12px;box-shadow:0 10px 28px #6b3d1828}.om{text-align:center;font-size:62px}.mandir{position:relative;margin:auto;width:88%;height:225px;background:linear-gradient(#d66a2e,#f29b3c);border-radius:22px;border:5px solid #b75220;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding-bottom:15px}.roof{position:absolute;top:-60px;font-size:100px}.deity{font-size:92px;animation:float 2s infinite ease-in-out}.platform{display:flex;gap:16px}.diya{font-size:48px;animation:flame .8s infinite alternate}.bell{font-size:44px}.flower{font-size:38px}@keyframes float{50%{transform:translateY(-7px)}}@keyframes flame{to{transform:scale(1.12)}}.msg{text-align:center;min-height:36px;margin:9px;font-size:20px;font-weight:1000}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.btn,.nav button{border:0;background:#fff;border-radius:20px;padding:14px 10px;box-shadow:0 6px 18px #6b3d1825;font-weight:1000;font-size:17px}.btn:active,.nav button:active{transform:scale(.96)}.panel{display:none;margin-top:12px;background:#fff9e9;border-radius:24px;padding:16px;box-shadow:0 8px 22px #6b3d1825}.panel h2{text-align:center;font-size:28px;margin:5px}.pic{text-align:center;font-size:110px;animation:float 2s infinite}.text{text-align:center;font-size:20px;font-weight:900;line-height:1.4;margin-bottom:10px}.nav{display:flex;justify-content:space-between;margin-top:12px}.reward{position:fixed;inset:0;display:none;align-items:center;justify-content:center;font-size:65px;background:#fff5d980;pointer-events:none}.reward.show{display:flex;animation:r 1s forwards}@keyframes r{0%{opacity:0}20%{opacity:1}100%{opacity:0}}@media(min-width:650px){.grid{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="head"><h1>🪔 My Little Mandir</h1><p>Learn • Play • Pray • Celebrate 🌸</p></div>
+<div class="temple"><div class="om">🕉️</div><div class="mandir"><div class="roof">🔺</div><div id="deity" class="deity">🐘</div><div class="platform"><span class="diya">🪔</span><span id="bell" class="bell">🔔</span><span>🌺</span></div></div></div>
+<div id="msg" class="msg">Welcome to your little mandir! 🙏</div>
+<div class="grid">
+<button class="btn" onclick="doAction('Light the diya... gently...')">🪔 Light Diya</button>
+<button class="btn" onclick="doAction('Offer a flower... with love...')">🌸 Offer Flower</button>
+<button class="btn" onclick="ring()">🔔 Ring Bell</button>
+<button class="btn" onclick="doAction('Offer prasad... with love...')">🍌 Offer Prasad</button>
+<button class="btn" onclick="openPage('deities')">🙏 Meet Deities</button>
+<button class="btn" onclick="openPage('stories')">📖 Tiny Stories</button>
+<button class="btn" onclick="openPage('mantra')">🕉️ Om & Mantras</button>
+<button class="btn" onclick="openPage('festivals')">🎉 Festivals</button>
+</div>
+<div id="panel" class="panel">
+<h2 id="title"></h2><div id="pic" class="pic"></div><div id="text" class="text"></div>
+<button class="btn" id="hear">🔊 Hear Slowly</button>
+<div class="nav"><button id="prev">◀ Previous</button><button id="next">Next ▶</button></div>
+</div></div>
+<div id="reward" class="reward">🎉 ⭐ 🌸</div>
+<script>
+const pages={
+deities:[
+["Ganesha","🐘","This is Ganesha. Ganesha is loved for wisdom and good beginnings."],
+["Krishna","🦚","This is Krishna. Krishna loves music, friends and playful stories."],
+["Rama","🏹","This is Rama. Rama is remembered for kindness and courage."],
+["Hanuman","🐒","This is Hanuman. Hanuman is known for courage, strength and devotion."],
+["Shiva","🔱","This is Shiva. Shiva is a peaceful and important Hindu deity."],
+["Lakshmi","🌺","This is Lakshmi. Lakshmi is associated with prosperity and good fortune."],
+["Saraswati","📚","This is Saraswati. Saraswati is associated with learning, music and knowledge."],
+["Durga","🦁","This is Durga. Durga is associated with strength and protection."]
+],
+stories:[
+["Ganesha's Wisdom","🐘","Ganesha teaches us to listen, think and be kind."],
+["Little Krishna","🦚","Krishna loved playing with his friends and sharing joy."],
+["Hanuman's Courage","🐒","Hanuman reminds us to be brave and help others."],
+["Rama's Kindness","🏹","Rama shows the importance of kindness and doing what is right."]
+],
+mantra:[
+["Om","🕉️","Om is a sacred sound."],
+["Namaste","🙏","Namaste is a respectful greeting."],
+["Shanti","🌼","Shanti means peace. Take a slow, calm breath."]
+],
+festivals:[
+["Diwali","🪔","Light a diya and celebrate the festival of lights."],
+["Ganesh Chaturthi","🐘","Celebrate Ganesha with flowers, music and devotion."],
+["Holi","🌈","Holi is a joyful festival of colors."],
+["Navratri","🌺","Navratri is celebrated with devotion, music and dance."]
+]};
+let page="",idx=0;
+function speak(t){
+ if(!("speechSynthesis" in window))return;
+ try{
+  speechSynthesis.cancel();
+  const voices=speechSynthesis.getVoices();
+  const indian=voices.find(v=>/^en-IN/i.test(v.lang))||voices.find(v=>/India/i.test(v.name));
+  const u=new SpeechSynthesisUtterance(t);
+  if(indian)u.voice=indian;
+  u.lang=indian?indian.lang:"en-IN";
+  u.rate=.58;u.pitch=1.1;u.volume=1;
+  speechSynthesis.speak(u);
+ }catch(e){}
+}
+function doAction(t){document.getElementById("msg").textContent=t;speak(t);let r=document.getElementById("reward");r.classList.remove("show");void r.offsetWidth;r.classList.add("show")}
+function ring(){let b=document.getElementById("bell");b.style.transform="rotate(12deg)";setTimeout(()=>b.style.transform="rotate(-12deg)",120);setTimeout(()=>b.style.transform="",240);doAction("Ring the bell... ding ding!")}
+function openPage(p){page=p;idx=0;render()}
+function render(){let x=pages[page][idx];document.getElementById("panel").style.display="block";document.getElementById("title").textContent=x[0];document.getElementById("pic").textContent=x[1];document.getElementById("text").textContent=x[2]}
+document.getElementById("prev").onclick=()=>{idx=(idx-1+pages[page].length)%pages[page].length;render()}
+document.getElementById("next").onclick=()=>{idx=(idx+1)%pages[page].length;render()}
+document.getElementById("hear").onclick=()=>speak(pages[page][idx][2])
+document.getElementById("deity").onclick=()=>speak("Ganesha")
+</script></body></html>
