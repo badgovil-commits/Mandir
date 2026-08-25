@@ -2,8 +2,8 @@
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Little Learner All-in-One</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#f5efff,#fff4d8);color:#3d2850}.app{max-width:900px;margin:auto;padding:12px}header{background:#fff;border:3px solid #d5a5ef;border-radius:25px;padding:12px;text-align:center}h1{margin:0;color:#782a98}header p{font-weight:bold}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}.tile{border:0;border-radius:20px;background:#fff;padding:7px;min-height:140px;box-shadow:0 5px 15px #0002;font-weight:bold}.icon{height:85px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:48px;background:#dff2ff}.tile:nth-child(4n+2) .icon{background:#ffdbe7}.tile:nth-child(4n+3) .icon{background:#e0f6bd}.tile:nth-child(4n) .icon{background:#ffe3a0}.toolbar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.toolbar button,.back,.lesson{border:0;border-radius:17px;padding:13px;background:white;box-shadow:0 5px 14px #0002;font-weight:bold}.page{display:none;background:#fff;border-radius:25px;margin-top:12px;padding:15px}.page.show{display:block}.back{background:#78319a;color:white}.hero{text-align:center}.heroIcon{font-size:80px}.lessonGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.lesson{font-size:18px;background:#fff5d7}.status{text-align:center;color:#782a98;font-weight:bold;margin:12px}@media(max-width:650px){.grid{grid-template-columns:repeat(2,1fr)}.toolbar{grid-template-columns:repeat(2,1fr)}}
-</style></head>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#72d9ff 0%,#b7f3e3 35%,#ffe79a 70%,#ffc7df 100%);color:#3d2850}.app{max-width:900px;margin:auto;padding:12px;background:linear-gradient(180deg,#ffffff33,#fff8d933);min-height:100vh}header{background:linear-gradient(135deg,#fff6b5,#ffd0e7,#c9e9ff);border:3px solid #d5a5ef;border-radius:25px;padding:12px;text-align:center}h1{margin:0;color:#782a98}header p{font-weight:bold}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}.tile{border:0;border-radius:20px;background:#fff;padding:7px;min-height:140px;box-shadow:0 5px 15px #0002;font-weight:bold}.icon{height:85px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:48px;background:#dff2ff}.tile:nth-child(4n+2) .icon{background:#ffdbe7}.tile:nth-child(4n+3) .icon{background:#e0f6bd}.tile:nth-child(4n) .icon{background:#ffe3a0}.toolbar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.toolbar button,.back,.lesson{border:0;border-radius:17px;padding:13px;background:linear-gradient(135deg,#fff,#ffe7f2);box-shadow:0 5px 14px #0002;font-weight:bold}.page{display:none;background:linear-gradient(145deg,#fff7dc,#e9f8ff,#ffe8f1);border-radius:25px;margin-top:12px;padding:15px}.page.show{display:block}.back{background:#78319a;color:white}.hero{text-align:center}.heroIcon{font-size:80px}.lessonGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.lesson{font-size:18px;background:linear-gradient(135deg,#fff3a8,#ffc8dc,#c8e8ff)}.status{text-align:center;color:#782a98;font-weight:bold;margin:12px}@media(max-width:650px){.grid{grid-template-columns:repeat(2,1fr)}.toolbar{grid-template-columns:repeat(2,1fr)}}
+button{touch-action:manipulation;cursor:pointer} .tile:active,.lesson:active,.toolbar button:active{transform:scale(.96)} </style></head>
 <body><div class="app">
 <header><h1>🌈 Little Learner</h1><p>Learn • Play • Grow • Pray 🪔</p></header>
 <div class="toolbar">
@@ -45,7 +45,31 @@ const cats=[
 const grid=document.getElementById('grid');
 cats.forEach((c,i)=>{let b=document.createElement('button');b.className='tile';b.innerHTML='<div class="icon">'+c[1]+'</div><b>'+c[0]+'</b>';b.onclick=()=>openCat(i);grid.appendChild(b)});
 function voice(){if(!('speechSynthesis'in window))return null;let v=speechSynthesis.getVoices();return v.find(x=>/^en-IN/i.test(x.lang))||v.find(x=>/India/i.test(x.name))||null}
-function speak(t){if(!('speechSynthesis'in window))return;speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(t),v=voice();if(v)u.voice=v;u.lang=v?v.lang:'en-IN';u.rate=.62;u.pitch=1.08;speechSynthesis.speak(u)}
+let audioCtx=null;
+function tone(){
+ const C=window.AudioContext||window.webkitAudioContext;
+ if(!C)return;
+ if(!audioCtx)audioCtx=new C();
+ if(audioCtx.state==='suspended')audioCtx.resume();
+ const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+ o.type='sine';o.frequency.value=660;
+ g.gain.setValueAtTime(.0001,audioCtx.currentTime);
+ g.gain.exponentialRampToValueAtTime(.12,audioCtx.currentTime+.02);
+ g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.35);
+ o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.4);
+}
+function speak(t){
+ tone();
+ if(!('speechSynthesis'in window))return;
+ try{
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t),v=voice();
+  if(v)u.voice=v;
+  u.lang=v?v.lang:'en-IN';
+  u.rate=.58;u.pitch=1.08;u.volume=1;
+  setTimeout(()=>speechSynthesis.speak(u),60);
+ }catch(e){}
+}
 function openCat(i){let c=cats[i];document.getElementById('home').style.display='none';document.getElementById('mandirPage').classList.remove('show');document.getElementById('page').classList.add('show');document.getElementById('pi').textContent=c[1];document.getElementById('pt').textContent=c[0];let box=document.getElementById('lessons');box.innerHTML='';c[2].forEach(x=>{let b=document.createElement('button');b.className='lesson';b.textContent=x;b.onclick=()=>{speak(x);document.getElementById('status').textContent='⭐ Great job!'};box.appendChild(b)})}
 function home(){document.getElementById('page').classList.remove('show');document.getElementById('mandirPage').classList.remove('show');document.getElementById('home').style.display='block'}
 function mandir(){document.getElementById('home').style.display='none';document.getElementById('page').classList.remove('show');document.getElementById('mandirPage').classList.add('show')}
