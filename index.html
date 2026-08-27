@@ -3,7 +3,15 @@
 <title>Little Learner All-in-One</title>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#72d9ff 0%,#b7f3e3 35%,#ffe79a 70%,#ffc7df 100%);color:#3d2850}.app{max-width:900px;margin:auto;padding:12px;background:linear-gradient(180deg,#ffffff33,#fff8d933);min-height:100vh}header{background:linear-gradient(135deg,#fff6b5,#ffd0e7,#c9e9ff);border:3px solid #d5a5ef;border-radius:25px;padding:12px;text-align:center}h1{margin:0;color:#782a98}header p{font-weight:bold}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}.tile{border:0;border-radius:20px;background:#fff;padding:7px;min-height:140px;box-shadow:0 5px 15px #0002;font-weight:bold}.icon{height:85px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:48px;background:#dff2ff}.tile:nth-child(4n+2) .icon{background:#ffdbe7}.tile:nth-child(4n+3) .icon{background:#e0f6bd}.tile:nth-child(4n) .icon{background:#ffe3a0}.toolbar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.toolbar button,.back,.lesson{border:0;border-radius:17px;padding:13px;background:linear-gradient(135deg,#fff,#ffe7f2);box-shadow:0 5px 14px #0002;font-weight:bold}.page{display:none;background:linear-gradient(145deg,#fff7dc,#e9f8ff,#ffe8f1);border-radius:25px;margin-top:12px;padding:15px}.page.show{display:block}.back{background:#78319a;color:white}.hero{text-align:center}.heroIcon{font-size:80px}.lessonGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}.lesson{font-size:18px;background:linear-gradient(135deg,#fff3a8,#ffc8dc,#c8e8ff)}.status{text-align:center;color:#782a98;font-weight:bold;margin:12px}@media(max-width:650px){.grid{grid-template-columns:repeat(2,1fr)}.toolbar{grid-template-columns:repeat(2,1fr)}}
-button{touch-action:manipulation;cursor:pointer} .tile:active,.lesson:active,.toolbar button:active{transform:scale(.96)} </style></head>
+button{touch-action:manipulation;cursor:pointer} .tile:active,.lesson:active,.toolbar button:active{transform:scale(.96)} 
+.lesson img{width:105px;height:105px;object-fit:contain;display:block;margin:auto;border-radius:16px;background:#fff8;padding:6px}
+.lesson .fallback{font-size:65px;height:105px;display:flex;align-items:center;justify-content:center}
+.modal{display:none;position:fixed;inset:0;background:#2b173dcc;z-index:99;align-items:center;justify-content:center;padding:15px}
+.modal.show{display:flex}.modalBox{width:min(680px,96vw);max-height:90vh;overflow:auto;background:linear-gradient(145deg,#fff6c9,#dff7ff,#ffddec);border-radius:25px;padding:18px;text-align:center}
+.modalBox img{width:min(300px,75vw);height:220px;object-fit:contain;background:#fff;border-radius:18px}
+.modalBox iframe{width:100%;height:260px;border:0;border-radius:15px}.close{background:#74329b;color:white;border:0;border-radius:16px;padding:11px 18px;font-weight:1000}
+.song{display:inline-block;background:#ef4f87;color:#fff;text-decoration:none;padding:12px 17px;border-radius:16px;font-weight:1000;margin:8px}
+</style></head>
 <body><div class="app">
 <header><h1>🌈 Little Learner</h1><p>Learn • Play • Grow • Pray 🪔</p></header>
 <div class="toolbar">
@@ -15,6 +23,17 @@ button{touch-action:manipulation;cursor:pointer} .tile:active,.lesson:active,.to
 <div id="home"><div id="grid" class="grid"></div></div>
 <section id="page" class="page"><button class="back" onclick="home()">◀ Back</button><div class="hero"><div id="pi" class="heroIcon">🌈</div><h2 id="pt"></h2><p>Tap a card to hear it slowly.</p></div><div id="lessons" class="lessonGrid"></div><div id="status" class="status"></div></section>
 <section id="mandirPage" class="page"><button class="back" onclick="home()">◀ Back</button><div class="hero"><div class="heroIcon">🪔🙏</div><h2>My Little Mandir</h2><p>Pray • Learn • Celebrate</p></div><div class="lessonGrid"><button class="lesson" onclick="speak('This is Ganesha. Ganesha is loved for wisdom and good beginnings.')">🐘 Ganesha 🔊</button><button class="lesson" onclick="speak('This is Krishna. Krishna loves music and friends.')">🦚 Krishna 🔊</button><button class="lesson" onclick="speak('Om. Take a slow breath.')">🕉️ Om 🔊</button><button class="lesson" onclick="speak('Namaste. We greet with love and respect.')">🙏 Namaste 🔊</button></div></section>
+</div>
+
+<div id="modal" class="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modalBox">
+    <button class="close" onclick="closeModal()">✕ Close</button>
+    <img id="modalImg" alt="">
+    <h2 id="modalTitle"></h2>
+    <p id="modalText"></p>
+    <div id="modalSong"></div>
+    <button class="song" onclick="hearModal()">🔊 Hear Slowly</button>
+  </div>
 </div>
 <script>
 const cats=[
@@ -43,6 +62,27 @@ const cats=[
 ['Recording','⏺️',['Record your voice','Play your recording','Say hello!']]
 ];
 const grid=document.getElementById('grid');
+const EM={
+'Twinkle Twinkle Little Star':'⭐','Wheels on the Bus':'🚌','Johny Johny Yes Papa':'👦',
+'मछली जल की रानी है':'🐟','नानी तेरी मोरनी':'🦚','चंदा मामा दूर के':'🌙','लकड़ी की काठी':'🐴',
+'The Lion and the Mouse':'🦁','The Thirsty Crow':'🐦','The Hare and the Tortoise':'🐢',
+'प्यासा कौआ':'🐦','शेर और चूहा':'🦁','खरगोश और कछुआ':'🐢',
+'Elephant':'🐘','Lion':'🦁','Tiger':'🐯','Cow':'🐄','Dog':'🐶','Cat':'🐱','Monkey':'🐒','Rabbit':'🐰',
+'A for Apple':'🍎','B for Ball':'⚽','C for Cat':'🐱','D for Dog':'🐶','E for Elephant':'🐘','F for Fish':'🐟',
+'अ से अनार':'🍎','आ से आम':'🥭','इ से इमली':'🌿','ई से ईख':'🌱',
+'Red':'🔴','Blue':'🔵','Green':'🟢','Yellow':'🟡','Orange':'🟠','Purple':'🟣',
+'Car':'🚗','Bus':'🚌','Train':'🚆','Aeroplane':'✈️','Boat':'🚤','Bicycle':'🚲',
+'Eyes':'👀','Ears':'👂','Nose':'👃','Mouth':'👄','Hands':'👐','Feet':'🦶',
+'Circle':'⚪','Square':'🟦','Triangle':'🔺','Rectangle':'▭','Star':'⭐','Heart':'❤️',
+'Brush your teeth':'🪥','Wash your hands':'🧼','Clean your toys':'🧸','Eat healthy food':'🍎',
+'Cut your nails':'✂️','Bedtime':'🛏️','Say Please and Thank You':'🙏','Be gentle with animals':'🐶',
+'Doctor':'🧑‍⚕️','Teacher':'👩‍🏫','Police Officer':'👮','Firefighter':'🧑‍🚒','Chef':'🧑‍🍳','Farmer':'🧑‍🌾',
+'Rose':'🌹','Lotus':'🪷','Sunflower':'🌻','Jasmine':'🌼','Hibiscus':'🌺'
+};
+function imageFor(name){
+ const e=EM[name]||'🌈'; const cp=e.codePointAt(0).toString(16).toUpperCase();
+ return '<img src="https://openmoji.org/data/color/svg/'+cp+'.svg" alt="" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'"><span class="fallback" style="display:none">'+e+'</span>';
+}
 cats.forEach((c,i)=>{let b=document.createElement('button');b.className='tile';b.innerHTML='<div class="icon">'+c[1]+'</div><b>'+c[0]+'</b>';b.onclick=()=>openCat(i);grid.appendChild(b)});
 function voice(){if(!('speechSynthesis'in window))return null;let v=speechSynthesis.getVoices();return v.find(x=>/^en-IN/i.test(x.lang))||v.find(x=>/India/i.test(x.name))||null}
 let audioCtx=null;
@@ -58,6 +98,20 @@ function tone(){
  g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.35);
  o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.4);
 }
+
+function animalSound(name){
+ const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+ if(!audioCtx)audioCtx=new C;if(audioCtx.state==="suspended")audioCtx.resume();
+ const m={"Elephant":[180,140],"Lion":[120,95],"Tiger":[150,110],"Cow":[240,180],"Dog":[420,280],"Cat":[700,500],"Monkey":[520,360],"Rabbit":[360,300]};
+ const f=m[name];if(!f)return;
+ const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+ o.type="sawtooth";o.frequency.setValueAtTime(f[0],audioCtx.currentTime);
+ o.frequency.exponentialRampToValueAtTime(f[1],audioCtx.currentTime+.35);
+ g.gain.setValueAtTime(.0001,audioCtx.currentTime);
+ g.gain.exponentialRampToValueAtTime(.11,audioCtx.currentTime+.02);
+ g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.38);
+ o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.4);
+}
 function speak(t){
  tone();
  if(!('speechSynthesis'in window))return;
@@ -70,7 +124,48 @@ function speak(t){
   setTimeout(()=>speechSynthesis.speak(u),60);
  }catch(e){}
 }
-function openCat(i){let c=cats[i];document.getElementById('home').style.display='none';document.getElementById('mandirPage').classList.remove('show');document.getElementById('page').classList.add('show');document.getElementById('pi').textContent=c[1];document.getElementById('pt').textContent=c[0];let box=document.getElementById('lessons');box.innerHTML='';c[2].forEach(x=>{let b=document.createElement('button');b.className='lesson';b.textContent=x;b.onclick=()=>{speak(x);document.getElementById('status').textContent='⭐ Great job!'};box.appendChild(b)})}
+function openCat(i){
+ let c=cats[i];
+ document.getElementById('home').style.display='none';
+ document.getElementById('mandirPage').classList.remove('show');
+ document.getElementById('page').classList.add('show');
+ document.getElementById('pi').textContent=c[1];
+ document.getElementById('pt').textContent=c[0];
+ let box=document.getElementById('lessons'); box.innerHTML='';
+ c[2].forEach(x=>{
+   let b=document.createElement('button'); b.className='lesson';
+   b.innerHTML=imageFor(x)+'<div>'+x+'</div>';
+   b.onclick=()=>{ 
+     if(c[0]==='Hindi Poems'){openHindiPoem(x);return}
+     if(c[0]==='Animals'){animalSound(x)}
+     speak(x); document.getElementById('status').textContent='⭐ Great job!';
+   };
+   box.appendChild(b);
+ });
+}
+
+const hindiPoems={
+'मछली जल की रानी है':'2hbrf3Gqc0w',
+'लकड़ी की काठी':'29-qJmcB9gU'
+};
+function openHindiPoem(name){
+ const imgName=EM[name]||'🎵';
+ const cp=imgName.codePointAt(0).toString(16).toUpperCase();
+ document.getElementById('modal').classList.add('show');
+ document.getElementById('modalImg').src='https://openmoji.org/data/color/svg/'+cp+'.svg';
+ document.getElementById('modalTitle').textContent=name;
+ document.getElementById('modalText').textContent='🎵 Hindi poem — tap Play Song.';
+ document.getElementById('modalSong').innerHTML='';
+ if(hindiPoems[name]){
+   document.getElementById('modalSong').innerHTML='<iframe src="https://www.youtube.com/embed/'+hindiPoems[name]+'?rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+ }else{
+   const q=encodeURIComponent(name+' Hindi rhyme for kids');
+   document.getElementById('modalSong').innerHTML='<a class="song" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query='+q+'">▶ Play '+name+'</a>';
+ }
+ speak(name);
+}
+function hearModal(){speak(document.getElementById('modalTitle').textContent)}
+function closeModal(){document.getElementById('modal').classList.remove('show');document.getElementById('modalSong').innerHTML=''}
 function home(){document.getElementById('page').classList.remove('show');document.getElementById('mandirPage').classList.remove('show');document.getElementById('home').style.display='block'}
 function mandir(){document.getElementById('home').style.display='none';document.getElementById('page').classList.remove('show');document.getElementById('mandirPage').classList.add('show')}
 </script></body></html>
